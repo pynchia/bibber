@@ -120,3 +120,6 @@ EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
 EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
 EMAIL_PORT = 587
 
+INSTALLED_APPS += ("play", )
+INSTALLED_APPS += ("django-behave", )
+
