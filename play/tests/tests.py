@@ -1,8 +1,7 @@
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 
-import test_utilities as ut
-from play.models import Game
+import utilities as ut
 
 
 class MyTestCase(TestCase):
@@ -25,6 +24,6 @@ class MyTestCase(TestCase):
     def tearDown(self):
         pass
 
-    def homepage_game_off(self):
-        ut.get_page_200(self, 'play:home')
+    def test_homepage_game_off(self):
+        ut.get_page_redirects(self, 'home', 'play:setupgame')
 

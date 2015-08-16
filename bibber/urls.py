@@ -16,6 +16,10 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 
+from .views import HomePage
+
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^$', HomePage.as_view(), name='home'),
+    url(r'^play/', include('play.urls', namespace='play', app_name='play')),
 ]
