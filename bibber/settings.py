@@ -123,3 +123,15 @@ EMAIL_PORT = 587
 INSTALLED_APPS += ("play", )
 INSTALLED_APPS += ("django_behave", )
 
+#---------
+
+# the following are the names of the values stored in the session
+# the number of players in the game
+KEY_NUM_PLAYERS = 'numplayers'
+# the current turn
+KEY_CUR_PLAYER = 'curplayer'
+# the status of the game
+KEY_GAMESTATUS = 'gamestatus'
+# where the game is at any given time
+KEY_GAMESTEP = 'gamestep'
+

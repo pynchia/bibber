@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block actions %}
+{% endblock %}
+{% block msging %}
+  <h3>Choose the number of players</h3>
+  <form id="id_players_form" enctype="multipart/form-data" method='POST' action=''>
+	  {% csrf_token %}
+	  {{ form.num_players }}
+	  <p>
+	   <input type="submit" name="submit" id="submit" value="Set and play game"/>
+	  </p>
+  </form>
+{% endblock %}
+{% block board %}
+{% endblock %}

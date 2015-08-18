@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<!-- HTML5 Boilerplate -->
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+
+<head>
+	<meta charset="utf-8">
+	<!-- Always force latest IE rendering engine & Chrome Frame -->
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+	<title>Ghost Bibber!</title>
+
+	<meta name="description" content="capture the ghosts">
+	<meta name="keywords" content="whatever, it may, be">
+	<meta name="author" content="xyz">
+	<meta http-equiv="cleartype" content="on">
+
+	<link rel="shortcut icon" href="{{ STATIC_URL }}favicon.ico">
+
+	<!-- Responsive and mobile friendly stuff -->
+	<meta name="HandheldFriendly" content="True">
+	<meta name="MobileOptimized" content="320">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<!-- Stylesheets -->
+	<link rel="stylesheet" href="{{ STATIC_URL }}css/html5reset.css" media="all">
+	<link rel="stylesheet" href="{{ STATIC_URL }}css/col.css" media="all">
+	<link rel="stylesheet" href="{{ STATIC_URL }}css/2cols.css" media="all">
+	<link rel="stylesheet" href="{{ STATIC_URL }}css/3cols.css" media="all">
+	<link rel="stylesheet" href="{{ STATIC_URL }}css/4cols.css" media="all">
+	<link rel="stylesheet" href="{{ STATIC_URL }}css/5cols.css" media="all">
+	<link rel="stylesheet" href="{{ STATIC_URL }}css/6cols.css" media="all">
+	<link rel="stylesheet" href="{{ STATIC_URL }}css/7cols.css" media="all">
+	<link rel="stylesheet" href="{{ STATIC_URL }}css/8cols.css" media="all">
+	<link rel="stylesheet" href="{{ STATIC_URL }}css/9cols.css" media="all">
+	<link rel="stylesheet" href="{{ STATIC_URL }}css/10cols.css" media="all">
+	<link rel="stylesheet" href="{{ STATIC_URL }}css/11cols.css" media="all">
+	<link rel="stylesheet" href="{{ STATIC_URL }}css/12cols.css" media="all">
+
+	<style type="text/css">
+
+	/*  
+	======================== 
+	- Note: These styles are just to pretty the basic page up a bit.
+	You should ignore these when copying and pasting into your site 
+	because your stylesheet should take care of making it look pretty!
+	======================== 
+	*/
+	body { padding:1em; font : 100%/1.4 'Helvetica Neue', arial, helvetica, helve, sans-serif; 	
+ }
+	h1 { font-size:2.0em; padding:0 0 .5em 0; }
+	h2 { font-size:1.5em; }
+	.header { padding:.5em 0; }
+	.col { background: #ccc; padding:0.6em 0; text-align:center;}
+
+	</style>
+</head>
+<body>
+ <div class="header">
+  <h1><a href="{% url 'home' %}">Ghost Bibber</a></h1>
+ </div>
+ <div class="section group">
+  {% block actions %}{% endblock %}
+ </div>
+ <div class="section group">
+  {% block msging %}{% endblock %}
+ </div>
+ <div class="section group">
+  {% block board %}{% endblock %}
+ </div>
+</body>
+</html>
