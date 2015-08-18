@@ -27,3 +27,6 @@ class MyTestCase(TestCase):
     def test_homepage_game_off(self):
         ut.get_page_redirects(self, 'home', 'play:setupgame')
 
+    def test_homepage_game_on(self):
+        ut.get_page_redirects(self, 'home', 'play:playgame')
+

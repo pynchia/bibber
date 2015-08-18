@@ -1,26 +1,18 @@
 {% extends "base.html" %}
 {% block actions %}
-  <h3>Start a new game: 
-    <a href="{% url 'play:setupgame' %}">New game</a>
-  </h3>
+ <h3>Start a new game: 
+  <a href="{% url 'play:setupgame' %}">New game</a>
+ </h3>
 {% endblock %}
 {% block msging %}
+ <p>
+  Numplayers = {{ view.request.session.numplayers }}
+ </p>
 {% endblock %}
 {% block board %}
       <div class="col span_6_of_6">
-	<h2>{{ rooms_left }} remain)</h2>
-        {% for character in player_board %}
-          {% if character.active %}
-	    <img src="{{STATIC_URL}}subjects/{{ character.subject.filename }}.png" alt="">
-	  {% else %}
-	    <img src="{{STATIC_URL}}subjects/{{ character.subject.filename }}-inactive.png" alt="">
-	  {% endif %}
-        {% endfor %}
-        <h2>Pick a feature</h2>
-	<p>
-          {% for feature in player_features %}
-	    <a href="{% url 'play:pickfeat' feature.id %}">{{ feature.description|upper }} ({{ feature.num_el_match }})</a>,&nbsp;
-          {% endfor %}
-	</p>
+	{% for card in view.request.session.board %}
+	    {{ card }},
+	{% endfor %}
       </div>
 {% endblock %}

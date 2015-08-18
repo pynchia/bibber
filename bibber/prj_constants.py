@@ -8,3 +8,6 @@ KEY_CUR_PLAYER = 'curplayer'
 KEY_GAME_IS_ON = 'gameison'
 # where the game is at any given time
 KEY_GAME_STEP = 'gamestep'
+#the board
+KEY_BOARD = 'board'
+
