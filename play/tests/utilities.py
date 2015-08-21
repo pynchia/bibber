@@ -1,17 +1,20 @@
 # --- Utility functions for the tests ---
 
 from django.core.urlresolvers import reverse
+from django.contrib.sessions.models import Session
 
-def get_page_200(testobj, pagename, kwargs=None):
+
+def get_page_200(testcase, pagename, kwargs=None):
     "Get a page and check the response is OK"
-    response = testobj.client.get(reverse(pagename, kwargs=kwargs))
+    response = testcase.client.get(reverse(pagename, kwargs=kwargs))
     # the page exists and is returned
-    testobj.assertEqual(response.status_code, 200)
+    testcase.assertEqual(response.status_code, 200)
     return response
 
-def get_page_redirects(testobj, pagename, redirpagename, kwargs=None):
+
+def get_page_redirects(testcase, pagename, targetname, kwargs=None):
     "Get a page and check it redirects to the given expected page"
-    response = testobj.client.get(reverse(pagename, kwargs=kwargs))
-    testobj.assertRedirects(response, reverse(redirpagename))
+    response = testcase.client.get(reverse(pagename, kwargs=kwargs))
+    testcase.assertRedirects(response, reverse(targetname))
     return response
 

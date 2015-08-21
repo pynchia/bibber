@@ -8,11 +8,11 @@ class HomePage(generic.RedirectView):
     permanent = False
 
     def get_redirect_url(self):
-        # if game is off
-        if self.request.session.get(KEY_GAME_IS_ON, None):
-            print "Game is On"
-            return reverse('play:playgame')
-        else:
-            print "Game is Off"
-            return reverse('play:setupgame')
+        """redirect to the appropriate page based on the status of the game
+        which reflects its progress
+        """
+        dest = {STATUS_OFF: 'play:setupgame',
+                STATUS_START: 'play:playgame',
+               }[self.request.session.get(KEY_GAME_STATUS, STATUS_OFF)]
+        return reverse(dest)
 

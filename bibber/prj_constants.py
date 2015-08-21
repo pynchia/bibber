@@ -4,10 +4,11 @@
 KEY_NUM_PLAYERS = 'numplayers'
 # the current turn
 KEY_CUR_PLAYER = 'curplayer'
-#s the game is on or off 
-KEY_GAME_IS_ON = 'gameison'
-# where the game is at any given time
-KEY_GAME_STEP = 'gamestep'
+#at what stage the game is
+KEY_GAME_STATUS = 'status'
+STATUS_OFF   = 0
+STATUS_START = 1
+
 #the board
 KEY_BOARD = 'board'
 

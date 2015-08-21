@@ -8,9 +8,10 @@ from .forms import GameSetUpForm
 class Card(object):
     def __init__(self, numcard):
         self.numcard = numcard
+        self.covered = True
 
     def __unicode__(self):
-        return self.numcard
+        return str(self.numcard)
 
 
 class SetUpGameView(generic.FormView):
@@ -23,11 +24,12 @@ class SetUpGameView(generic.FormView):
         # set the session vars
         self.request.session[KEY_NUM_PLAYERS] = \
                                     form.cleaned_data['num_players']
-        self.request.session[KEY_GAME_IS_ON] = True
+        # print "Numplayers=", form.cleaned_data['num_players']
+        self.request.session[KEY_GAME_STATUS] = STATUS_START
+
         cards = [Card(i) for i in range(24)]
         print 'cards', cards
         self.request.session[KEY_BOARD] = cards
-        # print "Numplayers=", form.cleaned_data['num_players']
         return super(SetUpGameView, self).form_valid(form)
 
 
