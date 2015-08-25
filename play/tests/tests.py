@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.core.urlresolvers import reverse
+from collections import Counter
 
 from bibber.prj_constants import *
 import utilities as ut
@@ -30,11 +31,25 @@ class MyTestCase(TestCase):
         """
         ut.get_page_redirects(self, 'home', 'play:setupgame')
 
-    def test_homepage_game_on(self):
-        """the game is on, just started, the home page must redirect to the
+    def test_homepage_game_started(self):
+        """the game has just started, the home page must redirect to the
         play page
         """
-        # let's set the session by going to the setup page
+        # let's set the session by posting to the setup page
         self.client.post(reverse('play:setupgame'), {'num_players': 2})
-        ut.get_page_redirects(self, 'home', 'play:playgame')
+        # now the homepage must redirect to the play page
+        return ut.get_page_redirects(self, 'home', 'play:playgame')
+
+    def test_board_is_filled_correctly(self):
+        self.test_homepage_game_started()
+        board = self.client.session[KEY_BOARD]
+        # for card in board:
+        #     print card
+        card_faces = [g.face for g in board]
+        faces_count = Counter(card_faces)
+        self.assertEqual(faces_count[CARD_ENTRANCE], 1)
+        self.assertEqual(faces_count[CARD_PRISON_KEY], 2)
+        self.assertEqual(faces_count[CARD_PRISON_CELL], 3)
+        for ghost_type in CARD_GHOST_TYPES:
+            self.assertEqual(faces_count[ghost_type], 6)
 

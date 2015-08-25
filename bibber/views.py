@@ -12,7 +12,7 @@ class HomePage(generic.RedirectView):
         which reflects its progress
         """
         dest = {STATUS_OFF: 'play:setupgame',
-                STATUS_START: 'play:playgame',
+                STATUS_PLAY: 'play:playgame',
                }[self.request.session.get(KEY_GAME_STATUS, STATUS_OFF)]
         return reverse(dest)
 

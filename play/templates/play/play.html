@@ -12,7 +12,7 @@
 {% block board %}
       <div class="col span_6_of_6">
 	{% for card in view.request.session.board %}
-	    {{ card.numcard }},
+	    {{ card }},
 	{% endfor %}
       </div>
 {% endblock %}
