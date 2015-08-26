@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load staticfiles %}
 {% block actions %}
  <h3>Start a new game: 
   <a href="{% url 'play:setupgame' %}">New game</a>
@@ -12,7 +13,7 @@
 {% block board %}
       <div class="col span_6_of_6">
 	{% for card in view.request.session.board %}
-	    {{ card }},
+		<img src="{% static "" %}{{ card.face }}.png" alt="">
 	{% endfor %}
       </div>
 {% endblock %}

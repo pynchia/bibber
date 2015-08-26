@@ -1,3 +1,4 @@
+{% load staticfiles %}
 <!DOCTYPE html>
 <!-- HTML5 Boilerplate -->
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
@@ -17,7 +18,7 @@
 	<meta name="author" content="xyz">
 	<meta http-equiv="cleartype" content="on">
 
-	<link rel="shortcut icon" href="{{ STATIC_URL }}favicon.ico">
+	<link rel="shortcut icon" href="{% static "favicon.ico" %}">
 
 	<!-- Responsive and mobile friendly stuff -->
 	<meta name="HandheldFriendly" content="True">
@@ -25,19 +26,13 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 	<!-- Stylesheets -->
-	<link rel="stylesheet" href="{{ STATIC_URL }}css/html5reset.css" media="all">
-	<link rel="stylesheet" href="{{ STATIC_URL }}css/col.css" media="all">
-	<link rel="stylesheet" href="{{ STATIC_URL }}css/2cols.css" media="all">
-	<link rel="stylesheet" href="{{ STATIC_URL }}css/3cols.css" media="all">
-	<link rel="stylesheet" href="{{ STATIC_URL }}css/4cols.css" media="all">
-	<link rel="stylesheet" href="{{ STATIC_URL }}css/5cols.css" media="all">
-	<link rel="stylesheet" href="{{ STATIC_URL }}css/6cols.css" media="all">
-	<link rel="stylesheet" href="{{ STATIC_URL }}css/7cols.css" media="all">
-	<link rel="stylesheet" href="{{ STATIC_URL }}css/8cols.css" media="all">
-	<link rel="stylesheet" href="{{ STATIC_URL }}css/9cols.css" media="all">
-	<link rel="stylesheet" href="{{ STATIC_URL }}css/10cols.css" media="all">
-	<link rel="stylesheet" href="{{ STATIC_URL }}css/11cols.css" media="all">
-	<link rel="stylesheet" href="{{ STATIC_URL }}css/12cols.css" media="all">
+	<link rel="stylesheet" href="{% static "css/html5reset.css" %}" media="all">
+	<link rel="stylesheet" href="{% static "css/col.css" %}" media="all">
+	<link rel="stylesheet" href="{% static "css/2cols.css" %}" media="all">
+	<link rel="stylesheet" href="{% static "css/3cols.css" %}" media="all">
+	<link rel="stylesheet" href="{% static "css/4cols.css" %}" media="all">
+	<link rel="stylesheet" href="{% static "css/5cols.css" %}" media="all">
+	<link rel="stylesheet" href="{% static "css/6cols.css" %}" media="all">
 
 	<style type="text/css">
 

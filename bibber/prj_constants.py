@@ -4,6 +4,12 @@
 KEY_NUM_PLAYERS = 'numplayers'
 # the current turn
 KEY_CUR_PLAYER = 'curplayer'
+# player 1
+KEY_PLAYER1 = 'p1'
+# player 2
+KEY_PLAYER2 = 'p2'
+# player 3
+KEY_PLAYER3 = 'p3'
 # the die
 KEY_DIE = 'die'
 
@@ -32,6 +38,7 @@ NUM_GHOST_TYPES = len(CARD_GHOST_TYPES)
 
 # the key to the prison
 CARD_PRISON_KEY = 'key'
+# the prison cell
 CARD_PRISON_CELL = 'cell'
 # the starting point
 CARD_ENTRANCE = 'entrance'
