@@ -8,7 +8,7 @@
  </div>
  <div>
   <img src="{% static "clock" %}{{ view.request.session.clock }}.png" alt="clock">
-  <a href="{% url 'play:move' %}"><img src="{% static "die-blank.png" %}" alt="die"></a>
+  <img src="{% static "die" %}{{ view.request.session.die }}.png" alt="die">
  </div>
 {% endblock %}
 {% block msging %}

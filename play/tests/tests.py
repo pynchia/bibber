@@ -53,3 +53,8 @@ class MyTestCase(TestCase):
         for ghost_type in CARD_GHOST_TYPES:
             self.assertEqual(faces_count[ghost_type], 6)
 
+    def test_current_player_is_set(self):
+        self.test_homepage_game_started()
+        current_player = self.client.session[KEY_CUR_PLAYER]
+        self.assertEqual(current_player, KEY_PLAYER1)
+

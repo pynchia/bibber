@@ -3,8 +3,11 @@ from . import views
 
 urlpatterns = [
         url(r'^$',
-            views.PlayGameView.as_view(),
+            views.PlayView.as_view(),
             name='playgame'),
+        url(r'^move/$',
+            views.MoveView.as_view(),
+            name='move'),
         url(r'^setup/$',
             views.SetUpGameView.as_view(),
             name='setupgame'),
