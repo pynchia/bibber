@@ -6,16 +6,8 @@ KEY_NUM_PLAYERS = 'numplayers'
 KEY_CUR_PLAYER = 'curplayer'
 # players
 KEY_PLAYERS = 'players'
-# the die
-KEY_DIE = 'die'
 # the clock
 KEY_CLOCK = 'clock'
-
-# --- game progress
-KEY_GAME_STATUS = 'status'
-STATUS_OFF  = 0
-STATUS_PLAY = 1
-STATUS_MOVE = 2
 
 # --- the board
 KEY_BOARD = 'board'

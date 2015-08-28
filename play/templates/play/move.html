@@ -8,7 +8,13 @@
  </div>
  <div>
   <img src="{% static "clock" %}{{ view.request.session.clock }}.png" alt="clock">
-  <img src="{% static "die" %}{{ view.request.session.die }}.png" alt="die">
+  <img src="{% static "die" %}{{ die }}.png" alt="die">
+  {% if not die %}
+      <audio controls autoplay>
+	      <source src="{% static "bell.mp3" %}" type="audio/mpeg">
+       	Your browser does not support the audio element.
+      </audio> 
+  {% endif %}
  </div>
 {% endblock %}
 {% block msging %}
@@ -16,7 +22,11 @@
 {% block board %}
       <div class="col span_6_of_6">
 	{% for card in view.request.session.board %}
-	<img src="{% static "" %}{{ card.filename }}" alt="{{ card.filename }}">
+	    {% if card.pos in possib_dest %}
+	        <a href="{% url 'play:move' %}"><img src="{% static "" %}{{ card.filename }}" alt="{{ card.filename }}"></a>
+	    {% else %}
+	        <img src="{% static "" %}{{ card.filename }}" alt="{{ card.filename }}">
+	    {% endif %}
 	{% endfor %}
       </div>
 {% endblock %}
