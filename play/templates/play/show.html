@@ -2,12 +2,8 @@
 {% load staticfiles %}
 {% block actions %}
  <div>
- <h3>
-  <a href="{% url 'play:setupgame' %}">New game</a>
- </h3>
- </div>
- <div>
   <img src="{% static "clock" %}{{ view.request.session.clock }}.png" alt="clock">
+  <img src="{% static "player" %}{{ view.request.session.curplayer }}.png    " alt="player{{ view.request.session.curplayer }}">
   {% if not view.die %}
       {% if view.request.session.gameison %}
           <audio controls autoplay>
@@ -22,12 +18,12 @@
           <img src="{% static "gameover.gif" %}" alt="Game over">
       {% endif %}
   {% endif %}
+ <h3>
+  <a href="{% url 'play:playgame' %}">Next</a>
+ </h3>
  </div>
 {% endblock %}
 {% block msging %}
- <h3>
-	 ...
- </h3>
 {% endblock %}
 {% block board %}
       <div class="col span_6_of_6">

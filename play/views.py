@@ -1,4 +1,4 @@
-from django.core.urlresolvers import reverse, reverse_lazy
+from django.core.urlresolvers import reverse_lazy
 from django.views import generic
 from django.http import HttpResponseRedirect
 #from django.conf import settings
@@ -116,8 +116,9 @@ class SetUpGameView(generic.FormView):
         # set the session vars
         num_players = int(form.cleaned_data['num_players'])
         self.request.session[KEY_NUM_PLAYERS] = num_players
-        self.request.session[KEY_PLAYERS] = [Player(name) for name in '012']
-        self.request.session[KEY_CUR_PLAYER] = 0
+        self.request.session[KEY_PLAYERS] = [Player(str(name)) for name
+                                             in xrange(num_players)]
+        self.request.session[KEY_CUR_PLAYER] = num_players-1
         self.request.session[KEY_CLOCK] = 0
         self.request.session[KEY_BOARD] = setup_board(num_players)
         self.request.session[KEY_GAME_IS_ON] = True
@@ -126,6 +127,17 @@ class SetUpGameView(generic.FormView):
 
 class PlayView(GameMustBeOnMixin, generic.TemplateView):
     template_name = 'play/play.html'
+
+    def get(self, request, *args, **kwargs):
+        # advance to the next player
+        cur_player = self.request.session[KEY_CUR_PLAYER]
+        players = self.request.session[KEY_PLAYERS]
+        player = players[cur_player]
+        cy_free_players = it.cycle(p for p in players if p.free)
+        while next(cy_free_players) != player:
+            pass
+        self.request.session[KEY_CUR_PLAYER] = int(next(cy_free_players).name)
+        return super(PlayView, self).get(request, *args, **kwargs)
 
 
 class MoveView(GameMustBeOnMixin, generic.TemplateView):
@@ -160,23 +172,33 @@ class ShowMoveView(GameMustBeOnMixin, generic.TemplateView):
         source_card = cards[player.pos]
         # remove the player from the source card
         source_card.occupants.remove(player.name)
-        if not source_card.captured and len(source_card.occupants) == 0:
+        if not source_card.captured and len(source_card.occupants) == 0 \
+           and player.pos not in DISALLOWED_DESTINATIONS:
             # cover the source card again
             source_card.covered = True
         dest_card = cards[dest]
+        # flip the destination card
+        dest_card.covered = False
         if dest_card.face == CARD_PRISON_KEY:
             # the player must go to prison!
             # check if he's the last one free, if so GAME OVER
-            pass
-        # flip the destination card
-        dest_card.covered = False
+            free_players = [p for p in players if p.free]
+            if len(free_players) == 1:
+                self.request.session[KEY_GAME_IS_ON] = False
+            else:
+                # make dest the first avail prison cell
+                free_prisons = (c for c in cards
+                                if c.face == CARD_PRISON_CELL and
+                                not c.occupants)
+                dest_card = next(free_prisons)
+
         # place the player on the dest card
-        player.pos = dest
+        player.pos = dest_card.pos
         dest_card.occupants.append(player.name)
         dest_card.occupants.sort()
         # update the session
         self.request.session[KEY_BOARD] = cards
         self.request.session[KEY_PLAYERS] = players
 
-        return super(ShowMoveView, self).get(request, dest=dest)
+        return super(ShowMoveView, self).get(request)
 
