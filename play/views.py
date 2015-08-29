@@ -133,10 +133,22 @@ class PlayView(GameMustBeOnMixin, generic.TemplateView):
         cur_player = self.request.session[KEY_CUR_PLAYER]
         players = self.request.session[KEY_PLAYERS]
         player = players[cur_player]
-        cy_free_players = it.cycle(p for p in players if p.free)
-        while next(cy_free_players) != player:
-            pass
-        self.request.session[KEY_CUR_PLAYER] = int(next(cy_free_players).name)
+        free_players = [p for p in players if p.free]
+        if len(free_players) == 1:
+            next_player = int(free_players[0].name)
+        else:
+            cy_free_players = it.cycle(free_players)
+            while next(cy_free_players) != player:
+                pass
+            next_player = int(next(cy_free_players).name)
+        self.request.session[KEY_CUR_PLAYER] = next_player
+        # cover any key left flipped up
+        cards = self.request.session[KEY_BOARD]
+        for c in cards:
+            if c.face == CARD_PRISON_KEY:
+                c.covered = True
+        self.request.session[KEY_BOARD] = cards
+
         return super(PlayView, self).get(request, *args, **kwargs)
 
 
@@ -191,6 +203,7 @@ class ShowMoveView(GameMustBeOnMixin, generic.TemplateView):
                                 if c.face == CARD_PRISON_CELL and
                                 not c.occupants)
                 dest_card = next(free_prisons)
+                player.free = False
 
         # place the player on the dest card
         player.pos = dest_card.pos
