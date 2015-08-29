@@ -19,7 +19,7 @@ class Card(object):
     def __init__(self, pos):
         self.pos = pos
         self.occupants = []
-        self.covered = False
+        self.covered = True
         self.captured = False
 
     def filename(self):
@@ -44,7 +44,7 @@ def is_dest_allowed(pos, delta):
     xp = pos % CARDS_PER_ROW
     yp = pos / CARDS_PER_ROW
     dest = pos + delta
-    if dest < 0 or dest >= NUM_CARDS:
+    if dest < 0 or dest >= NUM_CARDS or dest in DISALLOWED_DESTINATIONS:
         return False
     xd = dest % CARDS_PER_ROW
     yd = dest / CARDS_PER_ROW
@@ -161,11 +161,17 @@ class ShowMoveView(GameMustBeOnMixin, generic.TemplateView):
         # remove the player from the source card
         source_card.occupants.remove(player.name)
         if not source_card.captured and len(source_card.occupants) == 0:
-            # cover the card again
+            # cover the source card again
             source_card.covered = True
+        dest_card = cards[dest]
+        if dest_card.face == CARD_PRISON_KEY:
+            # the player must go to prison!
+            # check if he's the last one free, if so GAME OVER
+            pass
+        # flip the destination card
+        dest_card.covered = False
         # place the player on the dest card
         player.pos = dest
-        dest_card = cards[dest]
         dest_card.occupants.append(player.name)
         dest_card.occupants.sort()
         # update the session

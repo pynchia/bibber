@@ -25,13 +25,14 @@ NUM_GHOST_CARDS = NUM_CARDS - 6
 # the types of ghosts on the board
 CARD_GHOST_TYPES = ['ghost1', 'ghost2', 'ghost3']
 NUM_GHOST_TYPES = len(CARD_GHOST_TYPES)
-
 # the key to the prison
 CARD_PRISON_KEY = 'key'
 # the prison cell
 CARD_PRISON_CELL = 'cell'
 # the starting point
 CARD_ENTRANCE = 'entrance'
+
+DISALLOWED_DESTINATIONS = (0, 5, 18, 23)
 
 # the values of the die
 DIE_VALUES = (0, 1, 1, 2, 2, 3)
