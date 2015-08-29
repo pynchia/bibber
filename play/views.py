@@ -9,8 +9,8 @@ from .forms import GameSetUpForm
 
 
 class Player(object):
-    def __init__(self, num):
-        self.num = num  # which player I am
+    def __init__(self, name):
+        self.name = name  # which player I am
         self.pos = 0  # on which card I am
         self.free = True  # am I in prison
 
@@ -27,8 +27,8 @@ class Card(object):
             name = 'covered.png'
         else:
             name = '%s%s%s.png' % (self.face,
-                                    ''.join(self.occupants),
-                                    'c' if self.captured else '') 
+                                   ''.join(self.occupants),
+                                   'c' if self.captured else '') 
         return name
 
     def __unicode__(self):
@@ -95,6 +95,7 @@ def setup_board(num_players):
     #    print i, card
     return cards
 
+
 class GameMustBeOnMixin(object):
     """mixin to allow playing only if the game is on"""
     def dispatch(self, request, *args, **kwargs):
@@ -115,8 +116,7 @@ class SetUpGameView(generic.FormView):
         # set the session vars
         num_players = int(form.cleaned_data['num_players'])
         self.request.session[KEY_NUM_PLAYERS] = num_players
-        players = [Player(num) for num in '123']
-        self.request.session[KEY_PLAYERS] = players
+        self.request.session[KEY_PLAYERS] = [Player(name) for name in '012']
         self.request.session[KEY_CUR_PLAYER] = 0
         self.request.session[KEY_CLOCK] = 0
         self.request.session[KEY_BOARD] = setup_board(num_players)
@@ -131,21 +131,46 @@ class PlayView(GameMustBeOnMixin, generic.TemplateView):
 class MoveView(GameMustBeOnMixin, generic.TemplateView):
     template_name = 'play/move.html'
 
-    def get_context_data(self, **kwargs):
-        context = super(MoveView, self).get_context_data(**kwargs)
-        draw = random.choice(DIE_VALUES)
-        context['die'] = draw
-        if draw > 0:
+    def get(self, request, *args, **kwargs):
+        self.die = random.choice(DIE_VALUES)
+        if self.die > 0:
             cur_player = self.request.session[KEY_CUR_PLAYER]
             players = self.request.session[KEY_PLAYERS]
             player = players[cur_player]
-            context['possib_dest'] = find_destinations(player.pos, draw-1)
+            self.possib_dest = find_destinations(player.pos, self.die-1)
         else:
-            # time must advance...
+            # time must advance
             clock = self.request.session[KEY_CLOCK] + 1
             self.request.session[KEY_CLOCK] = clock
             if clock > 11:  # time is up, game over
                 self.request.session[KEY_GAME_IS_ON] = False
 
-        return context
+        return super(MoveView, self).get(request, *args, **kwargs)
+
+
+class ShowMoveView(GameMustBeOnMixin, generic.TemplateView):
+    template_name = 'play/show.html'
+
+    def get(self, request, dest):
+        dest = int(dest)
+        cur_player = self.request.session[KEY_CUR_PLAYER]
+        players = self.request.session[KEY_PLAYERS]
+        player = players[cur_player]
+        cards = self.request.session[KEY_BOARD]
+        source_card = cards[player.pos]
+        # remove the player from the source card
+        source_card.occupants.remove(player.name)
+        if not source_card.captured and len(source_card.occupants) == 0:
+            # cover the card again
+            source_card.covered = True
+        # place the player on the dest card
+        player.pos = dest
+        dest_card = cards[dest]
+        dest_card.occupants.append(player.name)
+        dest_card.occupants.sort()
+        # update the session
+        self.request.session[KEY_BOARD] = cards
+        self.request.session[KEY_PLAYERS] = players
+
+        return super(ShowMoveView, self).get(request, dest=dest)
 

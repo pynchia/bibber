@@ -8,7 +8,6 @@
  </div>
  <div>
   <img src="{% static "clock" %}{{ view.request.session.clock }}.png" alt="clock">
-  <img src="{% static "die" %}{{ view.die }}.png" alt="die">
   {% if not view.die %}
       {% if view.request.session.gameison %}
           <audio controls autoplay>
@@ -27,17 +26,13 @@
 {% endblock %}
 {% block msging %}
  <h3>
-  Pick a destination card on the board
+	 ...
  </h3>
 {% endblock %}
 {% block board %}
       <div class="col span_6_of_6">
 	{% for card in view.request.session.board %}
-	    {% if card.pos in view.possib_dest %}
-	        <a href="{% url 'play:showmove' dest=card.pos %}"><img src="{% static "" %}{{ card.filename }}" alt="{{ card.filename }}"></a>
-	    {% else %}
-	        <img src="{% static "" %}{{ card.filename }}" alt="{{ card.filename }}">
-	    {% endif %}
+	       <img src="{% static "" %}{{ card.filename }}" alt="{{ card.filename }}">
 	{% endfor %}
       </div>
 {% endblock %}
