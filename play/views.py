@@ -1,5 +1,6 @@
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.views import generic
+from django.http import HttpResponseRedirect
 #from django.conf import settings
 from bibber.prj_constants import *
 import random
@@ -94,6 +95,15 @@ def setup_board(num_players):
     #    print i, card
     return cards
 
+class GameMustBeOnMixin(object):
+    """mixin to allow playing only if the game is on"""
+    def dispatch(self, request, *args, **kwargs):
+        if request.session[KEY_GAME_IS_ON]:
+            return super(GameMustBeOnMixin, self).dispatch(request,
+                                                           *args, **kwargs)
+        else:
+            return HttpResponseRedirect(reverse_lazy('play:setupgame'))
+
 
 class SetUpGameView(generic.FormView):
     form_class = GameSetUpForm
@@ -110,14 +120,15 @@ class SetUpGameView(generic.FormView):
         self.request.session[KEY_CUR_PLAYER] = 0
         self.request.session[KEY_CLOCK] = 0
         self.request.session[KEY_BOARD] = setup_board(num_players)
+        self.request.session[KEY_GAME_IS_ON] = True
         return super(SetUpGameView, self).form_valid(form)
 
 
-class PlayView(generic.TemplateView):
+class PlayView(GameMustBeOnMixin, generic.TemplateView):
     template_name = 'play/play.html'
 
 
-class MoveView(generic.TemplateView):
+class MoveView(GameMustBeOnMixin, generic.TemplateView):
     template_name = 'play/move.html'
 
     def get_context_data(self, **kwargs):
@@ -131,7 +142,10 @@ class MoveView(generic.TemplateView):
             context['possib_dest'] = find_destinations(player.pos, draw-1)
         else:
             # time must advance...
-            pass
-        return context
+            clock = self.request.session[KEY_CLOCK] + 1
+            self.request.session[KEY_CLOCK] = clock
+            if clock > 11:  # time is up, game over
+                self.request.session[KEY_GAME_IS_ON] = False
 
+        return context
 

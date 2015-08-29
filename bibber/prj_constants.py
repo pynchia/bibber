@@ -4,11 +4,12 @@
 KEY_NUM_PLAYERS = 'numplayers'
 # the current turn
 KEY_CUR_PLAYER = 'curplayer'
-# players
-KEY_PLAYERS = 'players'
 # the clock
 KEY_CLOCK = 'clock'
-
+# the game status
+KEY_GAME_IS_ON = 'gameison'
+# players
+KEY_PLAYERS = 'players'
 # --- the board
 KEY_BOARD = 'board'
 
