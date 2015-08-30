@@ -191,22 +191,32 @@ class ShowMoveView(GameMustBeOnMixin, generic.TemplateView):
         dest_card = cards[dest]
         # flip the destination card
         dest_card.covered = False
+        # partially put the player on the card
+        player.pos = dest_card.pos
         if dest_card.face == CARD_PRISON_KEY:
             # the player must go to prison!
-            # check if he's the last one free, if so GAME OVER
+            # make dest the first avail prison cell
+            free_prisons = (c for c in cards
+                            if c.face == CARD_PRISON_CELL and
+                            not c.occupants)
+            dest_card = next(free_prisons)
+            # move the player in the prison
+            player.pos = dest_card.pos
+            player.free = False
             free_players = [p for p in players if p.free]
-            if len(free_players) == 1:
+            if len(free_players) == 0:
+                # all the players are in prison, GAME OVER
                 self.request.session[KEY_GAME_IS_ON] = False
-            else:
-                # make dest the first avail prison cell
-                free_prisons = (c for c in cards
-                                if c.face == CARD_PRISON_CELL and
-                                not c.occupants)
-                dest_card = next(free_prisons)
-                player.free = False
+        elif not dest_card.captured:  # it's a free ghost
+            ghosts_where_players = [cards[p.pos].face for p in players
+                                    if not cards[p.pos].captured]
+            if len(ghosts_where_players) == len(players) and \
+               len(set(ghosts_where_players)) == 1:
+                # all the players are on the same type of free ghost
+                for p in players:
+                    cards[p.pos].captured = True
 
-        # place the player on the dest card
-        player.pos = dest_card.pos
+        # finish placing the player on the dest card
         dest_card.occupants.append(player.name)
         dest_card.occupants.sort()
         # update the session
