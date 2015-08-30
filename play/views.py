@@ -10,9 +10,9 @@ from .forms import GameSetUpForm
 
 class Player(object):
     def __init__(self, name):
-        self.name = name  # which player I am
         self.pos = 0  # on which card I am
         self.free = True  # am I in prison
+        self.name = name  # which player I am
 
 
 class Card(object):
@@ -40,26 +40,35 @@ class Card(object):
         return self.__unicode__()
 
 
-def is_dest_allowed(pos, delta):
+def is_dest_allowed(pos, delta, players):
     xp = pos % CARDS_PER_ROW
     yp = pos / CARDS_PER_ROW
     dest = pos + delta
-    if dest < 0 or dest >= NUM_CARDS or dest in DISALLOWED_DESTINATIONS:
+    if dest < 0 or dest >= NUM_CARDS:
+        # out of board
         return False
+    if dest in DISALLOWED_DESTINATIONS:
+        # further investigation is required
+        prisoners = [p.pos for p in players if not p.free]
+        if dest not in prisoners:
+            # no other player to be freed at that destination
+            return False
+
     xd = dest % CARDS_PER_ROW
     yd = dest / CARDS_PER_ROW
     return any((xp == xd, yp == yd))
 
 
-def find_destinations(pos, hops):
+def find_destinations(pos, hops, players):
     """return the possible cards where I can land
     starting from card pos in hops hops"""
     dests = set()
     deltas = (-1, 1, -CARDS_PER_ROW, CARDS_PER_ROW)
-    possibs4one_hop = [pos+d for d in deltas if is_dest_allowed(pos, d)]
+    possibs4one_hop = [pos+d for d in deltas if is_dest_allowed(pos,
+                                                                d, players)]
     if hops:
         for p in possibs4one_hop:
-            dests.update(find_destinations(p, hops-1))
+            dests.update(find_destinations(p, hops-1, players))
         return dests
     else:
         return possibs4one_hop
@@ -131,17 +140,23 @@ class PlayView(GameMustBeOnMixin, generic.TemplateView):
     def get(self, request, *args, **kwargs):
         # advance to the next player
         cur_player = self.request.session[KEY_CUR_PLAYER]
+        print 'cur_player', cur_player
         players = self.request.session[KEY_PLAYERS]
         player = players[cur_player]
-        free_players = [p for p in players if p.free]
-        if len(free_players) == 1:
-            next_player = int(free_players[0].name)
-        else:
-            cy_free_players = it.cycle(free_players)
-            while next(cy_free_players) != player:
-                pass
-            next_player = int(next(cy_free_players).name)
-        self.request.session[KEY_CUR_PLAYER] = next_player
+        #free_players = [p for p in players if p.free]
+        #if len(free_players) == 1:
+        #    next_player = int(free_players[0].name)
+        #else:
+        cy_players = it.cycle(players)
+        while next(cy_players) != player:
+            pass
+        while True:
+            next_player = next(cy_players)
+            if next_player.free:
+                break
+        print 'next_player', next_player.name
+
+        self.request.session[KEY_CUR_PLAYER] = int(next_player.name)
         # cover any key left flipped up
         cards = self.request.session[KEY_BOARD]
         for c in cards:
@@ -161,7 +176,9 @@ class MoveView(GameMustBeOnMixin, generic.TemplateView):
             cur_player = self.request.session[KEY_CUR_PLAYER]
             players = self.request.session[KEY_PLAYERS]
             player = players[cur_player]
-            self.possib_dest = find_destinations(player.pos, self.die-1)
+            self.possib_dest = find_destinations(player.pos,
+                                                 self.die-1,
+                                                 players)
         else:
             # time must advance
             clock = self.request.session[KEY_CLOCK] + 1
@@ -205,8 +222,13 @@ class ShowMoveView(GameMustBeOnMixin, generic.TemplateView):
             player.free = False
             free_players = [p for p in players if p.free]
             if len(free_players) == 0:
-                # all the players are in prison, GAME OVER
+                # all the players are in prison, GAME OVER!
                 self.request.session[KEY_GAME_IS_ON] = False
+        elif dest_card.face == CARD_PRISON_CELL:
+            # it's a prison and it's a rescue op
+            prisoner = next((p for p in players
+                             if p.name in dest_card.occupants))
+            prisoner.free = True
         elif not dest_card.captured:  # it's a free ghost
             ghosts_where_players = [cards[p.pos].face for p in players
                                     if not cards[p.pos].captured]
