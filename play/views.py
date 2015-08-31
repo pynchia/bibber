@@ -185,6 +185,7 @@ class MoveView(GameMustBeOnMixin, generic.TemplateView):
             self.request.session[KEY_CLOCK] = clock
             if clock > 11:  # time is up, game over
                 self.request.session[KEY_GAME_IS_ON] = False
+                self.win = False
 
         return super(MoveView, self).get(request, *args, **kwargs)
 
@@ -212,31 +213,45 @@ class ShowMoveView(GameMustBeOnMixin, generic.TemplateView):
         player.pos = dest_card.pos
         if dest_card.face == CARD_PRISON_KEY:
             # the player must go to prison!
-            # make dest the first avail prison cell
-            free_prisons = (c for c in cards
+            # find the first avail prison cell
+            free_prisons = [c for c in cards
                             if c.face == CARD_PRISON_CELL and
-                            not c.occupants)
-            dest_card = next(free_prisons)
+                            not c.occupants]
+            dest_card = random.choice(free_prisons)
             # move the player in the prison
             player.pos = dest_card.pos
             player.free = False
+            self.sound = SOUND_PRISON_KEY
             free_players = [p for p in players if p.free]
             if len(free_players) == 0:
                 # all the players are in prison, GAME OVER!
                 self.request.session[KEY_GAME_IS_ON] = False
+                self.win = False
+                self.sound = SOUND_GAME_OVER
         elif dest_card.face == CARD_PRISON_CELL:
-            # it's a prison and it's a rescue op
+            # it's a prison therefore it's a rescue op
             prisoner = next((p for p in players
                              if p.name in dest_card.occupants))
             prisoner.free = True
+            self.sound = SOUND_PRISON_FREE
         elif not dest_card.captured:  # it's a free ghost
             ghosts_where_players = [cards[p.pos].face for p in players
                                     if not cards[p.pos].captured]
+            self.sound = 'ghost%d' % random.randint(0, SOUND_MAX_GHOSTS)
             if len(ghosts_where_players) == len(players) and \
                len(set(ghosts_where_players)) == 1:
                 # all the players are on the same type of free ghost
                 for p in players:
                     cards[p.pos].captured = True
+                    self.sound = SOUND_CAPTURED
+
+            free_ghosts = [c for c in cards if c.face.startswith('ghost') and
+                           not c.captured]
+            if len(free_ghosts) == 0:
+                # no more free ghosts, win the game!!!!
+                self.request.session[KEY_GAME_IS_ON] = False
+                self.win = True
+                self.sound = SOUND_WIN
 
         # finish placing the player on the dest card
         dest_card.occupants.append(player.name)

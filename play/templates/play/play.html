@@ -3,14 +3,9 @@
 {% block actions %}
  <div>
   <img src="{% static "clock" %}{{ view.request.session.clock }}.png" alt="clock">
-  <a href="{% url 'play:move' %}"><img src="{% static "die-blank.png" %}" alt="die"></a>
   <img src="{% static "player" %}{{ view.request.session.curplayer }}.png" alt="player{{ view.request.session.curplayer }}">
- <h3>
-  Roll the die!
- </h3>
+  <a href="{% url 'play:move' %}"><img src="{% static "die-blank.png" %}" alt="die"></a>
  </div>
-{% endblock %}
-{% block msging %}
 {% endblock %}
 {% block board %}
       <div class="col span_6_of_6">

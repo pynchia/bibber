@@ -2,7 +2,7 @@
 {% block actions %}
   <h2>Start a new game</h2>
 {% endblock %}
-{% block msging %}
+{% block board %}
   <h3>Choose the number of players</h3>
   <form id="id_players_form" enctype="multipart/form-data" method='POST' action=''>
 	  {% csrf_token %}
@@ -11,6 +11,4 @@
 	   <input type="submit" name="submit" id="submit" value="Set and play game"/>
 	  </p>
   </form>
-{% endblock %}
-{% block board %}
 {% endblock %}

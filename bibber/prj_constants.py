@@ -37,3 +37,9 @@ DISALLOWED_DESTINATIONS = (0, 5, 18, 23)
 # the values of the die
 DIE_VALUES = (0, 1, 1, 2, 2, 3)
 
+SOUND_MAX_GHOSTS = 24
+SOUND_PRISON_KEY = 'prison_key'
+SOUND_PRISON_FREE = 'prison_free'
+SOUND_CAPTURED = 'captured'
+SOUND_WIN = 'win'
+SOUND_GAME_OVER = 'gameover'

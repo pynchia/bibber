@@ -4,26 +4,19 @@
  <div>
   <img src="{% static "clock" %}{{ view.request.session.clock }}.png" alt="clock">
   <img src="{% static "player" %}{{ view.request.session.curplayer }}.png    " alt="player{{ view.request.session.curplayer }}">
-  {% if not view.die %}
-      {% if view.request.session.gameison %}
-          <audio controls autoplay>
-	      <source src="{% static "xyz.mp3" %}" type="audio/mpeg">
-       	      Your browser does not support the audio element.
-          </audio> 
-      {% else %}
-          <audio controls autoplay>
-	      <source src="{% static "bell12.mp3" %}" type="audio/mpeg">
-       	      Your browser does not support the audio element.
-          </audio> 
-          <img src="{% static "gameover.gif" %}" alt="Game over">
-      {% endif %}
+  <audio controls autoplay>
+   <source src="{% static "sound/" %}{{ view.sound }}.mp3" type="audio/mpeg">
+   Your browser does not support the audio element.
+  </audio> 
+  {% if not view.request.session.gameison %}
+   {% if view.win %}
+    <img src="{% static "win.gif" %}" alt="You win!">
+   {% else %}
+    <img src="{% static "gameover.gif" %}" alt="Game over">
+   {% endif %}
   {% endif %}
- <h3>
-  <a href="{% url 'play:playgame' %}">Next</a>
- </h3>
+  <a href="{% url 'play:playgame' %}"><img src="{% static "next.png" %}" alt="Next"></a>
  </div>
-{% endblock %}
-{% block msging %}
 {% endblock %}
 {% block board %}
       <div class="col span_6_of_6">
