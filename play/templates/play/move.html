@@ -30,6 +30,7 @@
 	    {% else %}
 	        <img src="{% static "" %}{{ card.filename }}" alt="{{ card.filename }}">
 	    {% endif %}
+	    {% cycle '' '' '' '' '' '<br>' %}
 	{% endfor %}
       </div>
 {% endblock %}

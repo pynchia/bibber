@@ -21,7 +21,8 @@
 {% block board %}
       <div class="col span_6_of_6">
 	{% for card in view.request.session.board %}
-	       <img src="{% static "" %}{{ card.filename }}" alt="{{ card.filename }}">
+	    <img src="{% static "" %}{{ card.filename }}" alt="{{ card.filename }}">
+	    {% cycle '' '' '' '' '' '<br>' %}
 	{% endfor %}
       </div>
 {% endblock %}
