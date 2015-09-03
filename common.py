@@ -1,7 +1,8 @@
-from prj_constants import *
 import random
 import itertools as it
+from django.conf import settings
 
+from prj_constants import *
 
 class Player(object):
     def __init__(self, name):
@@ -17,6 +18,7 @@ class Card(object):
         self.covered = True
         self.captured = False
 
+    @property
     def filename(self):
         if self.covered:
             name = 'covered.png'
@@ -24,7 +26,7 @@ class Card(object):
             name = '%s%s%s.png' % (self.face,
                                    ''.join(self.occupants),
                                    'c' if self.captured else '') 
-        return name
+        return settings.STATIC_URL+name
 
     def __unicode__(self):
         return 'face=%s captured=%s occupants=%s' % (self.face,
@@ -102,4 +104,20 @@ def setup_game(request, num_players):
     cards[key1].face = CARD_PRISON_KEY
     cards[key2].face = CARD_PRISON_KEY
     request.session[KEY_BOARD] = cards
+
+def advance_to_next_player(request):
+    """advance to the next player"""
+    cur_player = request.session[KEY_CUR_PLAYER]
+    players = request.session[KEY_PLAYERS]
+    player = players[cur_player]
+    cy_players = it.cycle(players)
+    while next(cy_players) != player:
+        pass
+    while True:
+        next_player = next(cy_players)
+        if next_player.free:
+            break
+    new_player = int(next_player.name)
+    request.session[KEY_CUR_PLAYER] = new_player
+    return new_player
 

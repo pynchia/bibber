@@ -12,5 +12,6 @@ class CardSerializer(se.Serializer):
                                                    max_value=NUM_CARDS-1))
     covered = se.BooleanField(default=True)
     captured = se.BooleanField(default=False)
+    filename = se.ReadOnlyField()
 
 

@@ -1,9 +1,8 @@
+import random
+from django.conf import settings
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-
-import random
-import itertools as it
 
 from prj_constants import *
 from common import *
@@ -24,7 +23,7 @@ class SetUpGameView(APIView):
     def post(self, request):
         serializer = GameSerializer(data=request.data)
         if serializer.is_valid():
-            num_players = int(serializer.validated_data['num_players'])
+            num_players = serializer.validated_data['num_players']
             setup_game(request, num_players)
             return Response({'num_players': num_players},
                             status=status.HTTP_201_CREATED)
@@ -32,36 +31,21 @@ class SetUpGameView(APIView):
 
 
 class PlayView(GameMustBeOnMixin, APIView):
-    template_name = 'play/play.html'
-
-    def get(self, request, *args, **kwargs):
-        # advance to the next player
-        cur_player = self.request.session[KEY_CUR_PLAYER]
-        print 'cur_player', cur_player
-        players = self.request.session[KEY_PLAYERS]
-        player = players[cur_player]
-        #free_players = [p for p in players if p.free]
-        #if len(free_players) == 1:
-        #    next_player = int(free_players[0].name)
-        #else:
-        cy_players = it.cycle(players)
-        while next(cy_players) != player:
-            pass
-        while True:
-            next_player = next(cy_players)
-            if next_player.free:
-                break
-        print 'next_player', next_player.name
-
-        self.request.session[KEY_CUR_PLAYER] = int(next_player.name)
+    def get(self, request):
+        cur_player = advance_to_next_player(request)
         # cover any key left flipped up
-        cards = self.request.session[KEY_BOARD]
+        cards = request.session[KEY_BOARD]
         for c in cards:
             if c.face == CARD_PRISON_KEY:
                 c.covered = True
-        self.request.session[KEY_BOARD] = cards
-
-        return super(PlayView, self).get(request, *args, **kwargs)
+        request.session[KEY_BOARD] = cards
+        se_cards = CardSerializer(cards, many=True)
+        return Response({'clock': request.session[KEY_CLOCK],
+                         'board': se_cards.data,
+                         'cur_player': cur_player},
+                        status=status.HTTP_200_OK)
+        #return Response(se_cards.data,
+        #                status=status.HTTP_200_OK)
 
 
 class MoveView(GameMustBeOnMixin, APIView):

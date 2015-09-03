@@ -38,13 +38,8 @@ class PlayView(GameMustBeOnMixin, generic.TemplateView):
     def get(self, request, *args, **kwargs):
         # advance to the next player
         cur_player = self.request.session[KEY_CUR_PLAYER]
-        print 'cur_player', cur_player
         players = self.request.session[KEY_PLAYERS]
         player = players[cur_player]
-        #free_players = [p for p in players if p.free]
-        #if len(free_players) == 1:
-        #    next_player = int(free_players[0].name)
-        #else:
         cy_players = it.cycle(players)
         while next(cy_players) != player:
             pass
@@ -52,8 +47,6 @@ class PlayView(GameMustBeOnMixin, generic.TemplateView):
             next_player = next(cy_players)
             if next_player.free:
                 break
-        print 'next_player', next_player.name
-
         self.request.session[KEY_CUR_PLAYER] = int(next_player.name)
         # cover any key left flipped up
         cards = self.request.session[KEY_BOARD]

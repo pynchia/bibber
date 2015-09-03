@@ -26,9 +26,9 @@
       <div class="col span_6_of_6">
 	{% for card in view.request.session.board %}
 	    {% if card.pos in view.possib_dest %}
-	        <a href="{% url 'play:showmove' dest=card.pos %}"><img src="{% static "" %}{{ card.filename }}" alt="{{ card.filename }}"></a>
+	        <a href="{% url 'play:showmove' dest=card.pos %}"><img src="{{ card.filename }}" alt="{{ card.filename }}"></a>
 	    {% else %}
-	        <img src="{% static "" %}{{ card.filename }}" alt="{{ card.filename }}">
+	        <img src="{{ card.filename }}" alt="{{ card.filename }}">
 	    {% endif %}
 	    {% cycle '' '' '' '' '' '<br>' %}
 	{% endfor %}
