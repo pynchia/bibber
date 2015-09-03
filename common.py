@@ -69,7 +69,14 @@ def find_destinations(pos, hops, players):
         return possibs4one_hop
 
 
-def setup_board(num_players):
+def setup_game(request, num_players):
+    request.session[KEY_NUM_PLAYERS] = num_players
+    request.session[KEY_CUR_PLAYER] = num_players-1
+    request.session[KEY_PLAYERS] = [Player(str(name)) for name
+                                    in xrange(num_players)]
+    request.session[KEY_CLOCK] = 0
+    request.session[KEY_GAME_IS_ON] = True
+
     cards = [Card(i) for i in xrange(NUM_CARDS)]
     indexes = range(NUM_CARDS)
     prison3 = indexes.pop(CARDS_PER_ROW * 4 - 1)
@@ -94,8 +101,5 @@ def setup_board(num_players):
     cards[prison3].covered = False
     cards[key1].face = CARD_PRISON_KEY
     cards[key2].face = CARD_PRISON_KEY
-
-    #for i, card in enumerate(cards):
-    #    print i, card
-    return cards
+    request.session[KEY_BOARD] = cards
 

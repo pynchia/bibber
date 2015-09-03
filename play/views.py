@@ -1,11 +1,11 @@
 from django.core.urlresolvers import reverse_lazy
 from django.views import generic
 from django.http import HttpResponseRedirect
-#from django.conf import settings
-from prj_constants import *
-from common import *
 import random
 import itertools as it
+
+from prj_constants import *
+from common import *
 from .forms import GameSetUpForm
 
 
@@ -28,13 +28,7 @@ class SetUpGameView(generic.FormView):
     def form_valid(self, form):
         # set the session vars
         num_players = int(form.cleaned_data['num_players'])
-        self.request.session[KEY_NUM_PLAYERS] = num_players
-        self.request.session[KEY_PLAYERS] = [Player(str(name)) for name
-                                             in xrange(num_players)]
-        self.request.session[KEY_CUR_PLAYER] = num_players-1
-        self.request.session[KEY_CLOCK] = 0
-        self.request.session[KEY_BOARD] = setup_board(num_players)
-        self.request.session[KEY_GAME_IS_ON] = True
+        setup_game(self.request, num_players)
         return super(SetUpGameView, self).form_valid(form)
 
 
