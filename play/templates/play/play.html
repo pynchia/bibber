@@ -3,7 +3,7 @@
 {% block actions %}
  <div>
   <img src="{% static "clock" %}{{ view.request.session.clock }}.png" alt="clock">
-  <img src="{% static "player" %}{{ view.request.session.curplayer }}.png" alt="player{{ view.request.session.curplayer }}">
+  <img src="{% static "player" %}{{ view.request.session.cur_player }}.png" alt="player{{ view.request.session.cur_player }}">
   <a href="{% url 'play:move' %}"><img src="{% static "die-blank.png" %}" alt="die"></a>
  </div>
 {% endblock %}

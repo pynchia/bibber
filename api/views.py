@@ -1,5 +1,5 @@
 import random
-#from django.conf import settings
+from django.conf import settings
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -21,6 +21,7 @@ class GameMustBeOnMixin(object):
 
 class SetUpGameView(APIView):
     """setup the game
+    verb: POST
     Input:  none
     Output: 'num_players': int
     """
@@ -36,6 +37,7 @@ class SetUpGameView(APIView):
 
 class NextTurnView(GameMustBeOnMixin, APIView):
     """advance the turn to the next player.
+    verb: GET
     Input:  none
     Output: 'clock': int
             'board': list of cards
@@ -47,7 +49,6 @@ class NextTurnView(GameMustBeOnMixin, APIView):
                            "pos": int
                          }
                         ]
-
             'cur_player': int
     """
     def get(self, request):
@@ -66,6 +67,20 @@ class NextTurnView(GameMustBeOnMixin, APIView):
 
 
 class DrawDieView(GameMustBeOnMixin, APIView):
+    """draw the die
+    verb: GET
+    Input:  none
+    Output: 'die': int
+            'game_is_on': bool
+            'sound' : soundpath
+            if the die shows a number (i.e. > 0)
+                'possib_dest': [int, int, ...]
+            else if the die shows the clock
+                if it's midday:
+                    'game_is_on': false
+                else
+                    'clock': int
+    """
     def get(self, request):
         ret_params = {}
         die = random.choice(DIE_VALUES)
@@ -77,6 +92,7 @@ class DrawDieView(GameMustBeOnMixin, APIView):
             possib_dest = find_destinations(player.pos,
                                             die-1,
                                             players)
+            request.session[KEY_POSSIB_DEST] = possib_dest
             ret_params[KEY_POSSIB_DEST] = possib_dest
             ret_params[KEY_GAME_IS_ON] = True
         else:
@@ -86,23 +102,48 @@ class DrawDieView(GameMustBeOnMixin, APIView):
             if clock > 11:  # time is up, game over
                 request.session[KEY_GAME_IS_ON] = False
                 ret_params[KEY_GAME_IS_ON] = False
+                ret_params[KEY_SOUND] = SOUND_CLOCK12
             else:
                 ret_params[KEY_CLOCK] = clock
                 ret_params[KEY_GAME_IS_ON] = True
+                ret_params[KEY_SOUND] = SOUND_CLOCK
 
         return Response(ret_params,
                         status=status.HTTP_200_OK)
 
 
 class PickDestView(GameMustBeOnMixin, APIView):
-    template_name = 'play/show.html'
+    """pick a destination
+    verb: POST
+    Input:  dest
+    Output: 'game_is_on': bool
+            'win': bool
+            'sound': soundpath
+            'board': list of cards
+                        [
+                         { "captured": bool,
+                           "covered": bool,
+                           "filename": "/static/cell.png",
+                           "occupants": [ in1, int2, ...],
+                           "pos": int
+                         }
+                        ]
+            ...
+    """
+    def post(self, request):
+        ret_params = {}
+        print 'request.data', request.data
+        dest = int(request.data[KEY_DEST])
+        print 'dest', dest
+        # it should handle errors, like dest field absent
+        if dest not in request.session[KEY_POSSIB_DEST]:
+            return Response({'error': 'Invalid destination'},
+                            status=status.HTTP_403_FORBIDDEN)
 
-    def get(self, request, dest):
-        dest = int(dest)
-        cur_player = self.request.session[KEY_CUR_PLAYER]
-        players = self.request.session[KEY_PLAYERS]
+        cur_player = request.session[KEY_CUR_PLAYER]
+        players = request.session[KEY_PLAYERS]
         player = players[cur_player]
-        cards = self.request.session[KEY_BOARD]
+        cards = request.session[KEY_BOARD]
         source_card = cards[player.pos]
         # remove the player from the source card
         source_card.occupants.remove(player.name)
@@ -125,44 +166,49 @@ class PickDestView(GameMustBeOnMixin, APIView):
             # move the player in the prison
             player.pos = dest_card.pos
             player.free = False
-            self.sound = SOUND_PRISON_KEY
+            ret_params[KEY_SOUND] = SOUND_PRISON_KEY
             free_players = [p for p in players if p.free]
             if len(free_players) == 0:
                 # all the players are in prison, GAME OVER!
-                self.request.session[KEY_GAME_IS_ON] = False
-                self.win = False
-                self.sound = SOUND_GAME_OVER
+                request.session[KEY_GAME_IS_ON] = False
+                ret_params[KEY_GAME_IS_ON] = False
+                ret_params[KEY_WIN] = False
+                ret_params[KEY_SOUND] = SOUND_GAME_OVER
         elif dest_card.face == CARD_PRISON_CELL:
             # it's a prison therefore it's a rescue op
             prisoner = next((p for p in players
                              if p.name in dest_card.occupants))
             prisoner.free = True
-            self.sound = SOUND_PRISON_FREE
+            ret_params[KEY_SOUND] = SOUND_PRISON_FREE
         elif not dest_card.captured:  # it's a free ghost
             ghosts_where_players = [cards[p.pos].face for p in players
                                     if not cards[p.pos].captured]
-            self.sound = 'ghost%d' % random.randint(0, SOUND_MAX_GHOSTS)
+            ret_params[KEY_SOUND] = SOUND_PATH+'ghost%d.mp3' % \
+                                           random.randint(0, SOUND_MAX_GHOSTS)
             if len(ghosts_where_players) == len(players) and \
                len(set(ghosts_where_players)) == 1:
                 # all the players are on the same type of free ghost
                 for p in players:
                     cards[p.pos].captured = True
-                    self.sound = SOUND_CAPTURED
+                ret_params[KEY_SOUND] = SOUND_CAPTURED
 
             free_ghosts = [c for c in cards if c.face.startswith('ghost') and
                            not c.captured]
             if len(free_ghosts) == 0:
                 # no more free ghosts, win the game!!!!
-                self.request.session[KEY_GAME_IS_ON] = False
-                self.win = True
-                self.sound = SOUND_WIN
+                request.session[KEY_GAME_IS_ON] = False
+                ret_params[KEY_GAME_IS_ON] = False
+                ret_params[KEY_WIN] = False
+                ret_params[KEY_SOUND] = SOUND_WIN
 
         # finish placing the player on the dest card
         dest_card.occupants.append(player.name)
         dest_card.occupants.sort()
         # update the session
-        self.request.session[KEY_BOARD] = cards
-        self.request.session[KEY_PLAYERS] = players
+        request.session[KEY_BOARD] = cards
+        ret_params[KEY_BOARD] = CardSerializer(cards, many=True).data
+        request.session[KEY_PLAYERS] = players
 
-        return super(ShowMoveView, self).get(request)
+        return Response(ret_params,
+                        status=status.HTTP_200_OK)
 

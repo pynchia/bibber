@@ -1,8 +1,8 @@
-from django.core.urlresolvers import reverse_lazy
-from django.views import generic
-from django.http import HttpResponseRedirect
 import random
 import itertools as it
+from django.core.urlresolvers import reverse_lazy
+from django.views import generic
+from django.http import HttpResponseRedirect, HttpResponseForbidden
 
 from prj_constants import *
 from common import *
@@ -70,12 +70,16 @@ class MoveView(GameMustBeOnMixin, generic.TemplateView):
             self.possib_dest = find_destinations(player.pos,
                                                  self.die-1,
                                                  players)
+            self.request.session[KEY_POSSIB_DEST] = self.possib_dest
         else:
             # time must advance
             clock = self.request.session[KEY_CLOCK] + 1
             self.request.session[KEY_CLOCK] = clock
             if clock > 11:  # time is up, game over
                 self.request.session[KEY_GAME_IS_ON] = False
+                self.sound = SOUND_CLOCK12
+            else:
+                self.sound = SOUND_CLOCK
 
         return super(MoveView, self).get(request, *args, **kwargs)
 
@@ -85,6 +89,9 @@ class ShowMoveView(GameMustBeOnMixin, generic.TemplateView):
 
     def get(self, request, dest):
         dest = int(dest)
+        if dest not in self.request.session[KEY_POSSIB_DEST]:
+            return HttpResponseForbidden('<h1>Invalid destination</h1>')
+
         cur_player = self.request.session[KEY_CUR_PLAYER]
         players = self.request.session[KEY_PLAYERS]
         player = players[cur_player]
@@ -127,13 +134,14 @@ class ShowMoveView(GameMustBeOnMixin, generic.TemplateView):
         elif not dest_card.captured:  # it's a free ghost
             ghosts_where_players = [cards[p.pos].face for p in players
                                     if not cards[p.pos].captured]
-            self.sound = 'ghost%d' % random.randint(0, SOUND_MAX_GHOSTS)
+            self.sound = SOUND_PATH+'ghost%d.mp3' % \
+                                          random.randint(0, SOUND_MAX_GHOSTS)
             if len(ghosts_where_players) == len(players) and \
                len(set(ghosts_where_players)) == 1:
                 # all the players are on the same type of free ghost
                 for p in players:
                     cards[p.pos].captured = True
-                    self.sound = SOUND_CAPTURED
+                self.sound = SOUND_CAPTURED
 
             free_ghosts = [c for c in cards if c.face.startswith('ghost') and
                            not c.captured]
