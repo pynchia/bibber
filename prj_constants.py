@@ -1,15 +1,22 @@
-# --- the session keys
+# --- the session keys and API JSON keys
 
 # the number of players in the game
-KEY_NUM_PLAYERS = 'numplayers'
+KEY_NUM_PLAYERS = 'num_players'
 # the current turn
-KEY_CUR_PLAYER = 'curplayer'
+KEY_CUR_PLAYER = 'cur_player'
 # the clock
 KEY_CLOCK = 'clock'
+# the die
+KEY_DIE = 'die'
 # the game status
-KEY_GAME_IS_ON = 'gameison'
+KEY_GAME_IS_ON = 'game_is_on'
+# is the game is won
+KEY_WIN = 'game_won'
 # players
 KEY_PLAYERS = 'players'
+# the possible destinations for the move
+KEY_POSSIB_DEST = 'possib_dest'
+
 # --- the board
 KEY_BOARD = 'board'
 
@@ -22,7 +29,7 @@ NUM_CARDS = NUM_ROWS * CARDS_PER_ROW
 # the number of cards with ghosts
 NUM_GHOST_CARDS = NUM_CARDS - 6
 
-# the types of ghosts on the board
+# the types of cards on the board
 CARD_GHOST_TYPES = ['ghost1', 'ghost2', 'ghost3']
 NUM_GHOST_TYPES = len(CARD_GHOST_TYPES)
 # the key to the prison

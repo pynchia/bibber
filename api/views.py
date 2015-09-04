@@ -1,5 +1,5 @@
 import random
-from django.conf import settings
+#from django.conf import settings
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -20,17 +20,36 @@ class GameMustBeOnMixin(object):
 
 
 class SetUpGameView(APIView):
+    """setup the game
+    Input:  none
+    Output: 'num_players': int
+    """
     def post(self, request):
         serializer = GameSerializer(data=request.data)
         if serializer.is_valid():
             num_players = serializer.validated_data['num_players']
             setup_game(request, num_players)
-            return Response({'num_players': num_players},
+            return Response({KEY_NUM_PLAYERS: num_players},
                             status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class PlayView(GameMustBeOnMixin, APIView):
+class NextTurnView(GameMustBeOnMixin, APIView):
+    """advance the turn to the next player.
+    Input:  none
+    Output: 'clock': int
+            'board': list of cards
+                        [
+                         { "captured": bool,
+                           "covered": bool,
+                           "filename": "/static/cell.png",
+                           "occupants": [ in1, int2, ...],
+                           "pos": int
+                         }
+                        ]
+
+            'cur_player': int
+    """
     def get(self, request):
         cur_player = advance_to_next_player(request)
         # cover any key left flipped up
@@ -40,38 +59,42 @@ class PlayView(GameMustBeOnMixin, APIView):
                 c.covered = True
         request.session[KEY_BOARD] = cards
         se_cards = CardSerializer(cards, many=True)
-        return Response({'clock': request.session[KEY_CLOCK],
-                         'board': se_cards.data,
-                         'cur_player': cur_player},
+        return Response({KEY_CLOCK: request.session[KEY_CLOCK],
+                         KEY_BOARD: se_cards.data,
+                         KEY_CUR_PLAYER: cur_player},
                         status=status.HTTP_200_OK)
-        #return Response(se_cards.data,
-        #                status=status.HTTP_200_OK)
 
 
-class MoveView(GameMustBeOnMixin, APIView):
-    template_name = 'play/move.html'
-
-    def get(self, request, *args, **kwargs):
-        self.die = random.choice(DIE_VALUES)
-        if self.die > 0:
-            cur_player = self.request.session[KEY_CUR_PLAYER]
-            players = self.request.session[KEY_PLAYERS]
+class DrawDieView(GameMustBeOnMixin, APIView):
+    def get(self, request):
+        ret_params = {}
+        die = random.choice(DIE_VALUES)
+        ret_params[KEY_DIE] = die
+        if die > 0:
+            cur_player = request.session[KEY_CUR_PLAYER]
+            players = request.session[KEY_PLAYERS]
             player = players[cur_player]
-            self.possib_dest = find_destinations(player.pos,
-                                                 self.die-1,
-                                                 players)
+            possib_dest = find_destinations(player.pos,
+                                            die-1,
+                                            players)
+            ret_params[KEY_POSSIB_DEST] = possib_dest
+            ret_params[KEY_GAME_IS_ON] = True
         else:
             # time must advance
-            clock = self.request.session[KEY_CLOCK] + 1
-            self.request.session[KEY_CLOCK] = clock
+            clock = request.session[KEY_CLOCK] + 1
+            request.session[KEY_CLOCK] = clock
             if clock > 11:  # time is up, game over
-                self.request.session[KEY_GAME_IS_ON] = False
-                self.win = False
+                request.session[KEY_GAME_IS_ON] = False
+                ret_params[KEY_GAME_IS_ON] = False
+            else:
+                ret_params[KEY_CLOCK] = clock
+                ret_params[KEY_GAME_IS_ON] = True
 
-        return super(MoveView, self).get(request, *args, **kwargs)
+        return Response(ret_params,
+                        status=status.HTTP_200_OK)
 
 
-class ShowMoveView(GameMustBeOnMixin, APIView):
+class PickDestView(GameMustBeOnMixin, APIView):
     template_name = 'play/show.html'
 
     def get(self, request, dest):

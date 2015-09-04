@@ -76,7 +76,6 @@ class MoveView(GameMustBeOnMixin, generic.TemplateView):
             self.request.session[KEY_CLOCK] = clock
             if clock > 11:  # time is up, game over
                 self.request.session[KEY_GAME_IS_ON] = False
-                self.win = False
 
         return super(MoveView, self).get(request, *args, **kwargs)
 

@@ -4,6 +4,7 @@ from django.conf import settings
 
 from prj_constants import *
 
+
 class Player(object):
     def __init__(self, name):
         self.pos = 0  # on which card I am
