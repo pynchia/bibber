@@ -1,0 +1,149 @@
+[33mcommit eba04baba102049065663b5e9f8756228eef3343[m
+Author: MBB <pynchia@gmail.com>
+Date:   Sat Sep 5 10:50:48 2015 +0200
+
+    versioned the api under /v1.0
+
+[33mcommit 220f9ab580ab739855b397bd7569acac3a991d33[m
+Author: MBB <pynchia@gmail.com>
+Date:   Fri Sep 4 22:50:07 2015 +0200
+
+    api with pick working!
+
+[33mcommit d1975322ea904c37886b7c96ac9e860450b5314f[m
+Author: MBB <pynchia@gmail.com>
+Date:   Fri Sep 4 16:22:10 2015 +0200
+
+    api can draw die
+
+[33mcommit 690c7e0c98efc3807280c5680e3549443479499d[m
+Author: MBB <pynchia@gmail.com>
+Date:   Fri Sep 4 00:12:25 2015 +0200
+
+    now api/play works
+
+[33mcommit 72bc88c774d93e151d10d5b1df921f824d4cc32d[m
+Author: MBB <pynchia@gmail.com>
+Date:   Thu Sep 3 16:44:15 2015 +0200
+
+    ok 4 api/setup
+
+[33mcommit de8405aa3a56541858b76c78420e51c35cec9972[m
+Author: MBB <pynchia@gmail.com>
+Date:   Wed Sep 2 21:46:32 2015 +0200
+
+    first on the road to an api
+
+[33mcommit fd4497fb65bf731e9567e6ce067806edec2360e6[m
+Author: MBB <pynchia@gmail.com>
+Date:   Tue Sep 1 12:29:54 2015 +0200
+
+    now with 6 columns only
+
+[33mcommit 719f52d7eafda7b8b2b1e9b1a92b242fc4e21558[m
+Author: MBB <pynchia@gmail.com>
+Date:   Mon Aug 31 19:20:32 2015 +0200
+
+    sounds added
+
+[33mcommit ee42e70c557a2c9bdcee2fbd1c419b46a53baef9[m
+Author: MBB <pynchia@gmail.com>
+Date:   Sun Aug 30 23:56:10 2015 +0200
+
+    prison rescue and next player ok
+
+[33mcommit 0126619716fe6cc324c79d3af0ede760365d01fa[m
+Author: MBB <pynchia@gmail.com>
+Date:   Sun Aug 30 11:46:44 2015 +0200
+
+    ghosts are captured!
+
+[33mcommit 5f4d4634605801d6ac7330833ad239779cf826a9[m
+Author: MBB <pynchia@gmail.com>
+Date:   Sun Aug 30 00:41:46 2015 +0200
+
+    jails ok
+
+[33mcommit 0f896877d08af953dbca370c75d7c40f22f9784a[m
+Author: MBB <pynchia@gmail.com>
+Date:   Sat Aug 29 23:52:12 2015 +0200
+
+    to the right jail
+
+[33mcommit f698003524472ea3b82404689761661bf2b4e51a[m
+Author: MBB <pynchia@gmail.com>
+Date:   Sat Aug 29 19:37:26 2015 +0200
+
+    only allowed dest cards
+
+[33mcommit 70b0da2be0a436da6baa24ae8c69aacb1fe237f6[m
+Author: MBB <pynchia@gmail.com>
+Date:   Sat Aug 29 18:39:41 2015 +0200
+
+    the players moves
+
+[33mcommit 9ae7c5059651f22598a40812d800a4bd9655a610[m
+Author: MBB <pynchia@gmail.com>
+Date:   Sat Aug 29 15:33:59 2015 +0200
+
+    time advances
+
+[33mcommit 1029a84c9422ac2f780af8562f6b37d55adabe86[m
+Author: MBB <pynchia@gmail.com>
+Date:   Sat Aug 29 00:50:14 2015 +0200
+
+    now with the right destinations to pick after draw
+
+[33mcommit 566bccfad6048bae7878913c3178660bdaa3cdb5[m
+Author: MBB <pynchia@gmail.com>
+Date:   Wed Aug 26 23:52:21 2015 +0200
+
+    images on the way
+
+[33mcommit 2fc39e34026e967e98e8901f39a14b060ae0e698[m
+Author: MBB <pynchia@gmail.com>
+Date:   Wed Aug 26 18:48:50 2015 +0200
+
+    fixed statics
+
+[33mcommit b161ae5101cfbb99f3afd209a5768a9bd97c17e0[m
+Author: MBB <pynchia@gmail.com>
+Date:   Tue Aug 25 18:16:38 2015 +0200
+
+    board filled correctly
+
+[33mcommit 3362cd61fdc2517daa0d91984a4dbc1eb590910c[m
+Author: MBB <pynchia@gmail.com>
+Date:   Fri Aug 21 23:44:11 2015 +0200
+
+    homepage redirects based on game status
+
+[33mcommit 9402d400e34d69e9417f011a169636e0bf21ae4a[m
+Author: MBB <pynchia@gmail.com>
+Date:   Wed Aug 19 00:06:26 2015 +0200
+
+    first cookie set
+
+[33mcommit 47f5fa717bbc4eb80ff9d42ff46552cc7e3439c7[m
+Author: MBB <pynchia@gmail.com>
+Date:   Tue Aug 18 12:28:38 2015 +0200
+
+    homepage
+
+[33mcommit ab5c5b8b6221d7744b8db253519cdcf72d2a817d[m
+Author: MBB <pynchia@gmail.com>
+Date:   Sun Aug 16 14:48:37 2015 +0200
+
+    TDD started
+
+[33mcommit bb09c1db17c6107c31114c55603c43110e8e9d87[m
+Author: MBB <pynchia@gmail.com>
+Date:   Sun Aug 16 12:36:54 2015 +0200
+
+    play app
+
+[33mcommit 6aef35371737141cb56ce8734dfedfb4115edc6f[m
+Author: MBB <pynchia@gmail.com>
+Date:   Sun Aug 16 12:26:06 2015 +0200
+
+    initial

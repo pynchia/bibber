@@ -21,6 +21,6 @@ from .views import HomePage
 urlpatterns = [
     url(r'^$', HomePage.as_view(), name='home'),
     url(r'^play/', include('play.urls', namespace='play', app_name='play')),
-    url(r'^api/', include('api.urls', namespace='api', app_name='api')),
+    url(r'^api/v1.0/', include('api.urls', namespace='api', app_name='api')),
     url(r'^admin/', include(admin.site.urls)),
 ]

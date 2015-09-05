@@ -1,6 +1,7 @@
 import random
 from django.conf import settings
 from rest_framework.views import APIView
+#from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -20,12 +21,15 @@ class GameMustBeOnMixin(object):
 
 
 class SetUpGameView(APIView):
+# in case you want a browsable API (sort of)
+#class SetUpGameView(ViewSet):
     """setup the game
     verb: POST
-    Input:  none
+    Input: 'num_players': int
     Output: 'num_players': int
     """
-    def post(self, request):
+    #def post(self, request):
+    def create(self, request):
         serializer = GameSerializer(data=request.data)
         if serializer.is_valid():
             num_players = serializer.validated_data['num_players']
