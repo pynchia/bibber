@@ -3,12 +3,12 @@
 {% block actions %}
  <div>
   <img src="{% static "clock" %}{{ view.request.session.clock }}.png" alt="clock">
-  <img src="{% static "player" %}{{ view.request.session.curplayer }}.png    " alt="player{{ view.request.session.curplayer }}">
+  <img src="{% static "player" %}{{ view.request.session.cur_player }}.png    " alt="player{{ view.request.session.cur_player }}">
   <audio controls autoplay>
-   <source src="{% static "sound/" %}{{ view.sound }}.mp3" type="audio/mpeg">
+   <source src="{{ view.sound }}" type="audio/mpeg">
    Your browser does not support the audio element.
   </audio> 
-  {% if not view.request.session.gameison %}
+  {% if not view.request.session.game_is_on %}
    {% if view.win %}
     <img src="{% static "win.gif" %}" alt="You win!">
    {% else %}
@@ -21,7 +21,7 @@
 {% block board %}
       <div class="col span_6_of_6">
 	{% for card in view.request.session.board %}
-	    <img src="{% static "" %}{{ card.filename }}" alt="{{ card.filename }}">
+	    <img src="{{ card.filename }}" alt="{{ card.filename }}">
 	    {% cycle '' '' '' '' '' '<br>' %}
 	{% endfor %}
       </div>
