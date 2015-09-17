@@ -5,3 +5,8 @@ Built with Django 1.8 and Django REST framework, it offers a json API (not compl
 
 It allows you to build your own front-end
 
+**DISLAIMER**
+I do not own the rights to this game.
+It was built as a programming exercise, not to be sold.
+
+
