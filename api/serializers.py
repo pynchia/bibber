@@ -1,5 +1,5 @@
 from rest_framework import serializers as se
-from prj_constants import *
+from prj_constants import NUM_CARDS
 
 
 class GameSerializer(se.Serializer):
